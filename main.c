@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 char *buffer = NULL;
 int string_size;
@@ -22,7 +23,8 @@ const char* reservada[11] =
     "boo",
     "double",
     "void",
-    "string"
+    "string",
+    "printInt"
 };
 
 int main()
@@ -39,7 +41,9 @@ int main()
     {
         colArq++;
 
-        if(buffer[i] == 10) // 10 em ascii é o \n
+        char c = buffer[i];
+
+        if(c == 10) // 10 em ascii é o \n
         {
             tk.finalizado = 1;
             linArq++;
@@ -54,17 +58,77 @@ int main()
                 {
                     imprimeToken(tk);
                 }
+                else if(tk.tipo == 5)
+                {
+                    if(ehReservada(tk.lexema))
+                    {
+                        tk.tipo = 6;
+                    }
+                    else if(strcmp(tk.lexema, "true") || strcmp(tk.lexema, "false"))
+                    {
+                        tk.tipo = 4;
+                    }
+                }
 
             tk.linha = linArq;
             tk.coluna = colArq;
             tk.tipo = 0;
-            strcmp(tk.lexema, "");
+            tk.finalizado = 0;
+            strcpy(tk.lexema, "");
         }
 
-
+        if(c == '\0' || c == 27) // Se for o ultimo char da string ou espaço
+        {
+            tk.finalizado = 1;
+        }
+        else if(c == 34)
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 3;
+            }
+            else if(tk.tipo == 3) // Se é string
+            {
+                tk.finalizado = 1;
+            }
+            else
+            {
+                tk.finalizado = 1;
+                colArq--;
+                i--;
+            }
+        }
+        else if(isalpha(c))
+        {
+            if(tk.tipo == 0)
+            {
+                tk.tipo = 5;
+                append(tk.lexema, c);
+            }
+            if(tk.tipo == 3)
+            {
+                append(tk.lexema, c);
+            }
+        }
     }
 
+    if(tk.finalizado = 1)
+    {
+        imprimeToken(tk);
+    }
+
+    buffer = NULL;
+    string_size = 0;
+
     return 0;
+}
+
+void append(char* s, char c)
+{
+        int len = strlen(s);
+        s[len] = c;
+        s[len+1] = '\0';
 }
 
 void LerArquivo(char *nomeArquivo)
