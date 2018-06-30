@@ -39,19 +39,29 @@ int main()
     {
         colArq++;
 
-        if(buffer[i] == 10){
+        if(buffer[i] == 10) // 10 em ascii é o \n
+        {
             tk.finalizado = 1;
             linArq++;
-            colArq = 1;
+            colArq = 0; // 0 por que na proxima será setado 1
+
+            continue;
         }
 
         if(tk.finalizado == 1){
-            imprimeToken(tk);
+
+                if(tk.tipo != 0)
+                {
+                    imprimeToken(tk);
+                }
+
             tk.linha = linArq;
             tk.coluna = colArq;
             tk.tipo = 0;
             strcmp(tk.lexema, "");
         }
+
+
     }
 
     return 0;
