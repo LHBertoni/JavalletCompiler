@@ -1,14 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-public void imprimeTokens(Token tokens[]){
-    int n = sizeof(tokens)/sizeof(tokens[0]);
-
-    printf("TOKEN@LEXEMA@LINHA@COLUNA")
-    for(int i = 0; i < n; i++)
-    {
-        printf("%s@%s@%i@%i", pegaTipoToken(tokens[i].tipo), tokens[i].lexema, tokens[i].linha, tokens[i].coluna);
-    }
+public void imprimeToken(Token token){
+    printf("%s@%s@%i@%i", pegaTipoToken(tokens.tipo), tokens.lexema, tokens.linha, tokens.coluna);
 }
 
 private char pegaTipoToken(typeToken tipo)

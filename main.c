@@ -4,6 +4,9 @@
 
 int main()
 {
+	
+    printf("TOKEN@LEXEMA@LINHA@COLUNA");
+	
     struct Token tk[1];
     tk[0].coluna = 1;
     tk[0].linha = 1;
