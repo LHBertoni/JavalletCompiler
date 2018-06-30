@@ -19,7 +19,8 @@ enum typeToken
     Operador,
     OperadorRelacional,
     Incremento,
-    Erro
+    Erro,
+	Novo
 }
 
 typedef struct Token* Token;
