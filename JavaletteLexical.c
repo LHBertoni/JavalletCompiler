@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
             strcpy(tk.lexema, "");
         }
 
-        if(c == 10) // 10 em ascii é o \n
+        if(c == '\n') // 10 em ascii é o \n
         {
             if(tk.tipo != 19){
                 tk.finalizado = 1;
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
                 append(tk.lexema, c);
             }
         }
-        else if(c == '\0' || c == ' ') // Se for o ultimo char da string ou espaço
+        else if(c == '\0' || c == ' ' || c == '\t' || c == '\f') // Se for o ultimo char da string ou espaço
         {
             tk.finalizado = 1;
         }
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -353,7 +353,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -393,7 +393,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
                 }
@@ -432,7 +432,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -472,7 +472,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -499,7 +499,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
                 }
@@ -519,7 +519,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
 
@@ -557,7 +557,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
                 }
@@ -577,7 +577,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
 
@@ -589,7 +589,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -618,7 +618,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
 
@@ -657,7 +657,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
 
@@ -715,7 +715,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
                 }
@@ -752,7 +752,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
                 }
@@ -788,7 +788,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -813,7 +813,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -834,7 +834,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -865,7 +865,7 @@ int main(int argc, char *argv[])
                     colArq--;
                     i--;
 
-                    if(buffer[i] == 10){
+                    if(buffer[i] == '\n'){
                         linArq --;
                     }
 
@@ -877,7 +877,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -905,7 +905,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
 
@@ -925,7 +925,7 @@ int main(int argc, char *argv[])
                 colArq--;
                 i--;
 
-                if(buffer[i] == 10){
+                if(buffer[i] == '\n'){
                     linArq --;
                 }
             }
@@ -934,7 +934,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(tk.finalizado = 1 && tk.tipo != 0 && tk.tipo != 18 && tk.tipo != 19)
+    if((tk.finalizado = 1) && tk.tipo != 0 && tk.tipo != 18 && tk.tipo != 19)
     {
         imprimeToken(tk);
     }

@@ -1,2 +1,3 @@
 # JavalletCompiler
-Compilador de Javallet em C - Projeto Compiladores UFABC 2018 Q2
+Compilador de Javalette em C
+Projeto Para a Atividade 1 de Compiladores UFABC 2018 Q2
