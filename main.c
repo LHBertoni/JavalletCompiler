@@ -270,7 +270,6 @@ int main(int argc, char *argv[])
                 if(buffer[i] == 10){
                     linArq --;
                 }
-                }
             }
             else
             {
