@@ -9,7 +9,7 @@ int string_size;
 struct Token{
     int tipo;
     int linha, coluna;
-    char lexema[100];
+    char lexema[200];
     int finalizado; // 0 false - 1 true
 };
 
@@ -20,109 +20,14 @@ const char* reservada[11] =
     "else",
     "return",
     "int",
-    "boo",
+    "bool",
     "double",
     "void",
     "string",
-    "printInt"
+    "printInt",
+    "return"
 };
 
-int main()
-{
-    struct Token tk;
-    int colArq = 1;
-    int linArq = 1;
-
-    printf("TOKEN@LEXEMA@LINHA@COLUNA\n");
-
-    LerArquivo("D:\UFABC\COMPILADORES\JavaletteCompiler\casos_teste\teste1.jl");
-
-    for(int i = 0; i <= string_size; i++)
-    {
-        colArq++;
-
-        char c = buffer[i];
-
-        if(c == 10) // 10 em ascii é o \n
-        {
-            tk.finalizado = 1;
-            linArq++;
-            colArq = 0; // 0 por que na proxima será setado 1
-
-            continue;
-        }
-
-        if(tk.finalizado == 1){
-
-                if(tk.tipo != 0)
-                {
-                    imprimeToken(tk);
-                }
-                else if(tk.tipo == 5)
-                {
-                    if(ehReservada(tk.lexema))
-                    {
-                        tk.tipo = 6;
-                    }
-                    else if(strcmp(tk.lexema, "true") || strcmp(tk.lexema, "false"))
-                    {
-                        tk.tipo = 4;
-                    }
-                }
-
-            tk.linha = linArq;
-            tk.coluna = colArq;
-            tk.tipo = 0;
-            tk.finalizado = 0;
-            strcpy(tk.lexema, "");
-        }
-
-        if(c == '\0' || c == 27) // Se for o ultimo char da string ou espaço
-        {
-            tk.finalizado = 1;
-        }
-        else if(c == 34)
-        {
-            if(tk.tipo == 0) // Se é novo
-            {
-                tk.coluna = colArq;
-                tk.tipo = 3;
-            }
-            else if(tk.tipo == 3) // Se é string
-            {
-                tk.finalizado = 1;
-            }
-            else
-            {
-                tk.finalizado = 1;
-                colArq--;
-                i--;
-            }
-        }
-        else if(isalpha(c))
-        {
-            if(tk.tipo == 0)
-            {
-                tk.tipo = 5;
-                append(tk.lexema, c);
-            }
-            if(tk.tipo == 3)
-            {
-                append(tk.lexema, c);
-            }
-        }
-    }
-
-    if(tk.finalizado = 1)
-    {
-        imprimeToken(tk);
-    }
-
-    buffer = NULL;
-    string_size = 0;
-
-    return 0;
-}
 
 void append(char* s, char c)
 {
@@ -245,6 +150,802 @@ int ehReservada(char* id)
     return 0;
 }
 
+int main(int argc, char *argv[])
+{
+    struct Token tk;
+    int colArq = 0;
+    int linArq = 1;
+
+
+    LerArquivo(argv[1]);
+
+    printf("TOKEN@LEXEMA@LINHA@COLUNA\n");
+
+    tk.tipo = 0;
+    tk.linha = linArq;
+    tk.coluna = 1;
+    strcpy(tk.lexema, "");
+
+    for(int i = 0; i <= string_size; i++)
+    {
+        colArq++;
+
+        char c = buffer[i];
+
+        if(tk.finalizado == 1){
+
+           if(tk.tipo == 5)
+            {
+                int reservada = ehReservada(tk.lexema);
+                int itrue = strcmp(tk.lexema, "true");
+                int ifalse = strcmp(tk.lexema, "false");
+
+                if(reservada == 1)
+                {
+                    tk.tipo = 6;
+                }
+                else if(itrue == 0 || ifalse == 0)
+                {
+                    tk.tipo = 4;
+                }
+            }
+
+            if(tk.tipo != 0 && tk.tipo != 18 && tk.tipo != 19)
+            {
+                imprimeToken(tk);
+            }
+
+            tk.linha = linArq;
+            tk.coluna = colArq;
+            tk.tipo = 0;
+            tk.finalizado = 0;
+            strcpy(tk.lexema, "");
+        }
+
+        if(c == 10) // 10 em ascii é o \n
+        {
+            if(tk.tipo != 19){
+                tk.finalizado = 1;
+            }
+
+            linArq++;
+            colArq = 0; // 0 por que na proxima será setado 1
+
+            if(tk.tipo == 3)
+            {
+                tk.tipo = 17;
+            }
+        }
+
+        if(tk.tipo == 19)
+        {
+            int tam = strlen(tk.lexema);
+
+            if(tk.lexema[tam - 1] == '*' && c == '/')
+            {
+                tk.finalizado = 1;
+            }
+
+            append(tk.lexema, c);
+        }
+        else if(tk.tipo == 18)
+        {
+            continue;
+        }
+        else if(c == '"') // "
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 3;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 3) // Se é string
+            {
+                tk.finalizado = 1;
+            }
+            else
+            {
+                tk.finalizado = 1;
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+        }
+        else if(tk.tipo == 3) // se for string
+        {
+            int tam = strlen(tk.lexema);
+
+            if(tam == 200)
+            {
+                tk.tipo = 17;
+                tk.finalizado = 0;
+
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+                }
+            }
+            else
+            {
+                append(tk.lexema, c);
+            }
+        }
+        else if(c == '\0' || c == ' ') // Se for o ultimo char da string ou espaço
+        {
+            tk.finalizado = 1;
+        }
+        else if(c == ';') // (
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 7;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+        else if(c == '(')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 8;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+        else if(c == ')')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 9;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+        else if(c == '{')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 10;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+        else if(c == '}')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 11;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+        else if(c == ',')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 12;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+        else if(c == '=')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 13;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 13 || tk.tipo == 15 || tk.tipo == 17)
+            {
+                if(strlen(tk.lexema) == 1 && (tk.lexema[0] == '=' || tk.lexema[0] == '>' || tk.lexema[0] == '<' || tk.lexema[0] == '!'))
+                {
+                    tk.tipo = 15;
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+                }
+
+                tk.finalizado = 1;
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '>')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 15;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '<')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 15;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '+')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 14;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 14)
+            {
+                if(strlen(tk.lexema) == 1 && tk.lexema[0] == '+')
+                {
+                    tk.tipo = 16;
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+                }
+
+                tk.finalizado = 1;
+            }
+            else if(tk.tipo == 2)
+            {
+                int tam = strlen(tk.lexema);
+
+                if(tk.lexema[tam - 1] == 'e' || tk.lexema[tam - 1] == 'E')
+                {
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+
+                    tk.finalizado = 1;
+                }
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i + 1] == 10){
+                    linArq --;
+                }
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '-')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 14;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 14)
+            {
+                if(strlen(tk.lexema) == 1 && tk.lexema[0] == '-')
+                {
+                    tk.tipo = 16;
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+                }
+
+                tk.finalizado = 1;
+            }
+            else if(tk.tipo == 2)
+            {
+                int tam = strlen(tk.lexema);
+
+                if(tk.lexema[tam - 1] == 'e' || tk.lexema[tam - 1] == 'E')
+                {
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+
+                    tk.finalizado = 1;
+                }
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '*')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 14;
+                append(tk.lexema, c);
+
+                tk.finalizado = 1;
+            }
+            else if(tk.tipo == 14)
+            {
+                if(strlen(tk.lexema) == 1 && tk.lexema[0] == '/')
+                {
+                    tk.tipo = 19;
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+
+                    tk.finalizado = 1;
+                }
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i + 1] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '/')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 14;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 14)
+            {
+                if(strlen(tk.lexema) == 1 && tk.lexema[0] == '/')
+                {
+                    tk.tipo = 18;
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+
+                    tk.finalizado = 1;
+                }
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i + 1] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '%')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 14;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i + 1] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+        else if(c == '&')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 17;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 17)
+            {
+                if(strlen(tk.lexema) == 1 && tk.lexema[0] == '&')
+                {
+                    tk.tipo = 14;
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+                }
+
+                tk.finalizado = 1;
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i + 1] == 10){
+                    linArq --;
+                }
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '|')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 17;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 17)
+            {
+                if(strlen(tk.lexema) == 1 && tk.lexema[0] == '|')
+                {
+                    tk.tipo = 14;
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+                }
+
+                tk.finalizado = 1;
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i + 1] == 10){
+                    linArq --;
+                }
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '.')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 17;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 1)
+            {
+                tk.tipo = 2;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '_')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 17;
+                append(tk.lexema, c);
+                tk.finalizado = 1;
+            }
+            else if(tk.tipo == 5)
+            {
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c == '!')
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 17;
+                append(tk.lexema, c);
+                tk.finalizado = 1;
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(isdigit(c))
+        {
+            if(tk.tipo == 0)
+            {
+                tk.tipo = 1;
+                tk.coluna = colArq;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 1 || tk.tipo == 2 || tk.tipo == 5)
+            {
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 17)
+            {
+                if(strlen(tk.lexema) == 1 && tk.lexema[0] == '.')
+                {
+                    tk.tipo = 2;
+                    append(tk.lexema, c);
+                }
+                else
+                {
+                    colArq--;
+                    i--;
+
+                    if(buffer[i] == 10){
+                        linArq --;
+                    }
+
+                    tk.finalizado = 1;
+                }
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(isalpha(c))
+        {
+            if(tk.tipo == 0)
+            {
+                tk.tipo = 5;
+                tk.coluna = colArq;
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 5)
+            {
+                append(tk.lexema, c);
+            }
+            else if(tk.tipo == 2 && (c == 'e' || c == 'E'))
+            {
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+
+                tk.finalizado = 1;
+            }
+        }
+        else if(c != 10)
+        {
+            if(tk.tipo == 0) // Se é novo
+            {
+                tk.coluna = colArq;
+                tk.tipo = 17;
+                append(tk.lexema, c);
+            }
+            else
+            {
+                colArq--;
+                i--;
+
+                if(buffer[i] == 10){
+                    linArq --;
+                }
+            }
+
+            tk.finalizado = 1;
+        }
+    }
+
+    if(tk.finalizado = 1 && tk.tipo != 0 && tk.tipo != 18 && tk.tipo != 19)
+    {
+        imprimeToken(tk);
+    }
+
+    buffer = NULL;
+    string_size = 0;
+
+    scanf("Teste");
+    return 0;
+}
 
 //  Tipo
 //	Novo = 0
@@ -265,3 +966,5 @@ int ehReservada(char* id)
 //  OperadorRelacional = 15,
 //  Incremento = 16,
 //  Erro = 17,
+//  ComentarioLinha = 18,
+//  ComentarioDeLinhas = 19,
